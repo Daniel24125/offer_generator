@@ -1,12 +1,46 @@
 const express = require('express');
-const bodyParser = require("body-parser");
 const app = express();
 const port = process.env.PORT || 8000;
+const cors = require("cors");
+const multer  = require('multer')
+
+
+
+app.use(cors({
+    origin: [
+        "http://localhost:3000",
+    ],
+    methods: "GET,PATCH,POST,DELETE",
+    allowedHeaders: [
+        "Content-Type,authorization",
+         "Content-Type,X-Requested-With", 
+         "responseType, arraybuffer"
+        ]
+  }))
+const storage = multer.memoryStorage()
+const upload = multer({ storage: storage }).any("excel")
 
 
 app.post("/getTemplates", (req, res)=>{
-    res.json({
-        error: false
+    upload(req, res, function (err) {       
+        if (err instanceof multer.MulterError) {
+            console.log("A Multer error occurred when uploading.", err)
+            res.json({
+                error: true, 
+                msg: String(err)
+            })
+        } else if (err) {
+            console.log("An unknown error occurred when uploading.", err)
+            res.json({
+                error: true, 
+                msg: String(err)
+            })
+        }   
+        const file = req.files[0].buffer
+        console.log(file)
+        res.json({
+            error: false
+        })
     })
 })
 

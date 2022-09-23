@@ -3,18 +3,31 @@ import React from 'react'
 import InactiveUpload from './Components/InactiveUpload'
 import { Button, Snackbar } from '@mui/material'
 import Loading from './Components/Loading'
+import axios from "axios"
 
 function App() {
   const [error, setError] = React.useState("")
   const [loading, setLoading] = React.useState(false)
-  const onDrop = React.useCallback(acceptedFiles => {
+
+
+  const onDrop = React.useCallback(async (acceptedFiles) => {
     // Do something with the files
     if(acceptedFiles.length > 1){
       setError("Submete apenas um ficheiro excel.")
     }else if(!acceptedFiles[0].name.split(".")[1] || (acceptedFiles[0].name.split(".")[1]!== "xlsx" && acceptedFiles[0].name.split(".")[1]!== "xls")){
       setError("O ficheiro que submeteste não é um ficheiro excel.")
     }else{
-      console.log(process.env.REACT_APP_API_BASE)
+      const formData = new FormData();
+      formData.append("excel", acceptedFiles[0]);
+      setLoading(true)
+      const resp = await axios.post(
+        process.env.REACT_APP_API_BASE+'getTemplates',
+        formData
+      )
+      setLoading(false)
+      if(resp.data.error){
+        setError(resp.data.msg)
+      }
     }
   }, [])
 
@@ -23,7 +36,7 @@ function App() {
 
   return (
     !loading ? <div className="dropContainer"{...getRootProps()} >
-      <input {...getInputProps()} />
+      <input name="excel" {...getInputProps()} />
       <InactiveUpload isDragActive={isDragActive} />
       <Snackbar
         anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
