@@ -4,6 +4,9 @@ html, body
 
 html 
     background: #fbfbfb
+    width: 100vw
+    height: 100vh
+    overflow-x: hidden
 
 .dropContainer
     width: 100vw
@@ -22,12 +25,12 @@ html
     display: flex
     justify-content: center
     align-items: center
-    border: 1px solid #efefef
+    border: 1px solid #3498db
     margin-bottom: 20px
     transition: all 500ms ease
     svg 
         font-size: 150px
-        color: #efefef
+        color: #3498db
         transition: all 300ms ease
 
 .activeDrag
@@ -45,5 +48,26 @@ html
     100%
         background: #3498db
  
+$page-padding: 20px
 
-
+.templatesContainer
+    width: calc(100vw - $page-padding)
+    height: 100%
+    display: flex 
+    flex-direction: column 
+    align-items: center 
+    padding: 0 
+    .templatesContainerHeader
+        width: 90% 
+        padding: 35px $page-padding
+        display: flex 
+        justify-content: space-between
+        align-items: center 
+    .templatesWrapper
+        display: flex
+        width: 100% 
+        flex-wrap: wrap 
+        justify-content: center
+        .offerContainer
+            margin: 20px 
+            cursor: pointer

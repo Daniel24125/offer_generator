@@ -4,11 +4,12 @@ import InactiveUpload from './Components/InactiveUpload'
 import { Button, Snackbar } from '@mui/material'
 import Loading from './Components/Loading'
 import axios from "axios"
+import TemplatesPreview from './Components/TemplatesPreview'
 
 function App() {
   const [error, setError] = React.useState("")
   const [loading, setLoading] = React.useState(false)
-
+  const [templates, setTemplates] = React.useState(null)
 
   const onDrop = React.useCallback(async (acceptedFiles) => {
     // Do something with the files
@@ -20,13 +21,15 @@ function App() {
       const formData = new FormData();
       formData.append("excel", acceptedFiles[0]);
       setLoading(true)
-      const resp = await axios.post(
+      const {data: response} = await axios.post(
         process.env.REACT_APP_API_BASE+'getTemplates',
         formData
       )
       setLoading(false)
-      if(resp.data.error){
-        setError(resp.data.msg)
+      if(response.error){
+        setError(response.msg)
+      }else{
+        setTemplates(response.data)
       }
     }
   }, [])
@@ -34,10 +37,10 @@ function App() {
   const {getRootProps, getInputProps, isDragActive} = useDropzone({onDrop})
       
 
-  return (
-    !loading ? <div className="dropContainer"{...getRootProps()} >
-      <input name="excel" {...getInputProps()} />
-      <InactiveUpload isDragActive={isDragActive} />
+  return (<>
+    {!Boolean(templates) ? !loading ? <div className="dropContainer"{...getRootProps()} >
+        <input name="excel" {...getInputProps()} />
+        <InactiveUpload isDragActive={isDragActive} />
       <Snackbar
         anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
         open={Boolean(error)}
@@ -52,7 +55,11 @@ function App() {
     />
     </div> : 
     <Loading />
-  );
+    : <TemplatesPreview 
+        templates={templates}
+        setTemplates={setTemplates}
+      />   } 
+  </>);
 }
 
 export default App;

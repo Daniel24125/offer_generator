@@ -10,7 +10,7 @@ const InactiveUpload = ({isDragActive}) => {
                 <FileUploadIcon />
             </div>
             <Typography style={{width: 250, textAlign: "center"}} variant="h6">
-                Arrastar o ficheiro ou clicar para selecionar o ficheiro excel
+                Arrastar ou clicar para selecionar o ficheiro excel
             </Typography>
     </>
   )

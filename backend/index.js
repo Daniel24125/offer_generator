@@ -3,7 +3,10 @@ const app = express();
 const port = process.env.PORT || 8000;
 const cors = require("cors");
 const multer  = require('multer')
-
+const path = require('path');
+const publicPath = path.join(__dirname, '..', 'frontend/build');
+app.use(express.static(publicPath));
+require('dotenv').config()
 
 
 app.use(cors({
@@ -20,9 +23,10 @@ app.use(cors({
 const storage = multer.memoryStorage()
 const upload = multer({ storage: storage }).any("excel")
 
+const {readExcelBuffer} = require("./utils/excel")
 
 app.post("/getTemplates", (req, res)=>{
-    upload(req, res, function (err) {       
+    upload(req, res, async err => {       
         if (err instanceof multer.MulterError) {
             console.log("A Multer error occurred when uploading.", err)
             res.json({
@@ -36,19 +40,18 @@ app.post("/getTemplates", (req, res)=>{
                 msg: String(err)
             })
         }   
-        const file = req.files[0].buffer
-        console.log(file)
+        const buffer = req.files[0].buffer
+        const parsedTamplates = await readExcelBuffer(buffer)
         res.json({
-            error: false
+            error: false,
+            data: parsedTamplates
         })
     })
 })
 
-app.post("/saveSVG", (req, res)=>{
-    res.json({
-        error: false
-    })
-})
+app.get('*', (req, res) => {
+    res.sendFile(path.join(publicPath, 'index.html'));
+ });
 
 app.listen(port, () => {
 console.log("App is listenning o port " + port);
