@@ -22,7 +22,7 @@ function App() {
       formData.append("excel", acceptedFiles[0]);
       setLoading(true)
       const {data: response} = await axios.post(
-        '/getTemplates',
+        '/getTemplates/',
         formData
       )
       setLoading(false)
