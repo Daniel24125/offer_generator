@@ -6,7 +6,9 @@ const multer  = require('multer')
 const path = require('path');
 const publicPath = path.join(__dirname, 'build');
 app.use(express.static(publicPath));
-require('dotenv').config()
+if(process.env.NODE_ENV === "development"){
+    require('dotenv').config()
+}
 
 
 app.use(cors({
